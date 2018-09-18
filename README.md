@@ -22,14 +22,20 @@ An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid
 - Clone the forked version of the [vid2vid](https://github.com/NVIDIA/vid2vid) repository which has been modified for this project:
     ```bash
     git clone https://github.com/fniroui/vid2vid.git
+    ```
+- Download and compile a snapshot of [FlowNet2](https://github.com/NVIDIA/flownet2-pytorch) by running:
+    ```
+    python vid2vid/scripts/download_flownet2.py
+    ```
 
 ### Dataset
-- The [SceneNet RGB-D](https://robotvault.bitbucket.io/scenenet-rgbd.html) dataset is used in this project.
+- The [SceneNet RGB-D](https://robotvault.bitbucket.io/scenenet-rgbd.html) dataset is used in this project. Download the complete or partial training dataset.
+- Run `python ...` with the correct directory to the downloaded dataset to move and format the dataset to `./vid2vid/datasets/Scenenet`.
 
 ### Testing
 
 ### Training
-    ```
+
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/fniroui/depth2room/blob/master/LICENSE.txt) file for details and the license of the other projects used within this repository. 

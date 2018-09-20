@@ -5,6 +5,7 @@ from shutil import copyfile
 
 parser = argparse.ArgumentParser(description='format')
 parser.add_argument('--dir', type=str, default= '~/Downloads/train/0/', help='location where sceneNet dataset is extracted from home directory')
+parser.add_argument('--keep',  action='store_true', help='Call to keep copy images instead of moving them')
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -44,8 +45,12 @@ if __name__ == '__main__':
                 out_depth_name = os.path.join(out_dir_A, str(seq_num).zfill(4) + '_' + str(data_num).zfill(4) + '.png')
                 out_rgb_name = os.path.join(out_dir_B, str(seq_num).zfill(4) + '_' + str(data_num).zfill(4) + '.jpg')
     
-                copyfile(in_depth_name, out_depth_name)
-                copyfile(in_rgb_name, out_rgb_name)
+                if args.keep:
+                    copyfile(in_depth_name, out_depth_name)
+                    copyfile(in_rgb_name, out_rgb_name)
+                else:
+                    os.rename(in_depth_name, out_depth_name)
+                    os.rename(in_rgb_name, out_rgb_name)
 
                 data_num += 1
             

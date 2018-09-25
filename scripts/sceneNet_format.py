@@ -2,9 +2,11 @@ import os
 import argparse
 from pathlib import Path
 from shutil import copyfile
+import numpy as np
+from PIL import Image 
 
 parser = argparse.ArgumentParser(description='format')
-parser.add_argument('--dir', type=str, default= '~/Downloads/train/0/', help='location where sceneNet dataset is extracted from home directory')
+parser.add_argument('--dir', type=str, default= '~/dataset/0/', help='location where sceneNet dataset is extracted from home directory')
 parser.add_argument('--keep',  action='store_true', help='Call to keep copy images instead of moving them')
 
 if __name__ == '__main__':
@@ -23,6 +25,8 @@ if __name__ == '__main__':
     dir_list.sort(key=lambda f: int(f.rsplit(os.path.extsep, 1)[0].rsplit(None,1)[-1]))
     
     for f in dir_list:
+        print('Processing sequence ' + str(seq_num) + '.')
+
         in_dir_A = os.path.join(in_dir, f + '/depth')
         in_dir_B = os.path.join(in_dir, f + '/photo')
 
@@ -44,12 +48,20 @@ if __name__ == '__main__':
 
                 out_depth_name = os.path.join(out_dir_A, str(seq_num).zfill(4) + '_' + str(data_num).zfill(4) + '.png')
                 out_rgb_name = os.path.join(out_dir_B, str(seq_num).zfill(4) + '_' + str(data_num).zfill(4) + '.jpg')
+
+                img_depth = Image.open(in_depth_name)
+                img_depth = np.array(img_depth, dtype=np.uint32)
+                img_depth = np.divide(img_depth, 100.0)
+                img_depth = img_depth.astype(np.uint8)
+                img_depth = Image.fromarray(img_depth, 'P')
+                img_depth.save(out_depth_name)
     
                 if args.keep:
-                    copyfile(in_depth_name, out_depth_name)
+                    # copyfile(in_depth_name, out_depth_name)
                     copyfile(in_rgb_name, out_rgb_name)
                 else:
-                    os.rename(in_depth_name, out_depth_name)
+                    # os.rename(in_depth_name, out_depth_name)
+                    os.remove(in_depth_name)
                     os.rename(in_rgb_name, out_rgb_name)
 
                 data_num += 1

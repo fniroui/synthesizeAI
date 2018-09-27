@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
 import argparse
-import streamlit as st
 import numpy as np
 import cv2
 from PIL import Image
+import imageio
 
 
 parser = argparse.ArgumentParser(description='format')
@@ -13,37 +13,10 @@ parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320'
 parser.add_argument('--num', type=int, default= 1, help='Number of result versions')
 
 # @st.cache
-# def load_img(test_A, test_B, result, indx, seq_len):
-#     imgs = []
-#     caption = ['Input', 'Real']
-    
-#     imgs.append(cv2.imread(test_A))
-#     imgs.append(cv2.imread(test_B))
-
-#     caption_num = 0
-
-#     for f in sorted(os.listdir(result)):
-#         fake_pth = os.path.join(result, f)
-#         fake_imgs = sorted(os.listdir(fake_pth))
-
-#         caption_num += 1
-#         caption.append('Fake ' + str(caption_num))
-
-
-#         imgs.append(cv2.imread(test_B))
-#         # if indx < (seq_len - len(fake_imgs)):
-#         #     imgs.append(cv2.imread(test_B))
-
-#         # else:
-#         #     fake_path = fake_pth + '/' + fake_imgs[indx]
-#         #     imgs.append(cv2.imread(fake_path))
-
-#     return tuple(imgs), tuple(caption)
 def load_img(test_A, test_B, result, indx, seq_len):
     imgs = []
     caption = ['Input', 'Real']
     
-
     img = cv2.resize(cv2.imread(test_A),(320, 256), interpolation = cv2.INTER_CUBIC)
     imgs.append(img)
     img = cv2.resize(cv2.imread(test_B),(320, 256), interpolation = cv2.INTER_CUBIC)
@@ -84,17 +57,21 @@ if  __name__ == '__main__':
 
     frame_size = (256, 320)
     seq_len = len(sorted(os.listdir(test_A)))
-    # seq_len = 1
-
-    st.title('depth2room results:')
-    animation = st.empty()
-    progress_bar = st.empty()
+    # seq_len = 60
     
-    for i in range(seq_len):
-        imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i, seq_len)
-        animation.image(imgs, caption = imgs_caption, clamp=True)
-        progress_bar.progress(int((i + 1.0) / seq_len * 100))
+    with imageio.get_writer('result.gif', mode='I', duration=0.1) as writer:
+        for i in range(seq_len):
+            imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i, seq_len)
+            gif_frame = np.zeros([imgs[0].shape[0], imgs[0].shape[1] * len(imgs), 3])
+            
+            for j in range(len(imgs)):
+                gif_frame[:, j*imgs[0].shape[1] : j*imgs[0].shape[1] + imgs[0].shape[1], :] = imgs[j]
+            
+            writer.append_data(gif_frame)
 
-        # if i % 20 == 0:
-        #     st.write('Frame: ', i)
-        #     st.image(imgs, caption= imgs_caption, clamp=True)
+
+        
+
+
+
+

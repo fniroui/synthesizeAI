@@ -9,6 +9,11 @@ parser = argparse.ArgumentParser(description='format')
 parser.add_argument('--dir', type=str, default= '~/dataset/0/', help='location where sceneNet dataset is extracted from home directory')
 parser.add_argument('--keep',  action='store_true', help='Call to keep copy images instead of moving them')
 
+def _sort_dir(dir_list):
+    dir_list.sort(key=lambda f: int(f.rsplit(os.path.extsep, 1)[0].rsplit(None,1)[-1]))
+    return dir_list
+  
+
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -21,14 +26,13 @@ if __name__ == '__main__':
 
     seq_num = 0
 
-    dir_list = os.listdir(in_dir)
-    dir_list.sort(key=lambda f: int(f.rsplit(os.path.extsep, 1)[0].rsplit(None,1)[-1]))
+    dir_list = _sort_dir(os.listdir(in_dir))
     
-    for f in dir_list:
+    for seq in dir_list:
         print('Processing sequence ' + str(seq_num) + '.')
 
-        in_dir_A = os.path.join(in_dir, f + '/depth')
-        in_dir_B = os.path.join(in_dir, f + '/photo')
+        in_dir_A = os.path.join(in_dir, seq + '/depth')
+        in_dir_B = os.path.join(in_dir, seq + '/photo')
 
         out_dir_A = os.path.join(out_dir, 'train_A/seq' + str(seq_num).zfill(4))
         out_dir_B = os.path.join(out_dir, 'train_B/seq' + str(seq_num).zfill(4))
@@ -40,7 +44,8 @@ if __name__ == '__main__':
 
         for _, _, fnames in sorted(os.walk(in_dir_A)):
             data_num = 0
-            fnames.sort(key=lambda f: int(f.rsplit(os.path.extsep, 1)[0].rsplit(None,1)[-1]))
+            fnames = _sort_dir(fnames)
+            # fnames.sort(key=lambda f: int(f.rsplit(os.path.extsep, 1)[0].rsplit(None,1)[-1]))
 
             for fname in fnames:
                 in_depth_name = os.path.join(in_dir_A, fname)
@@ -50,17 +55,15 @@ if __name__ == '__main__':
                 out_rgb_name = os.path.join(out_dir_B, str(seq_num).zfill(4) + '_' + str(data_num).zfill(4) + '.jpg')
 
                 img_depth = Image.open(in_depth_name)
-                img_depth = np.array(img_depth, dtype=np.uint32)
+                img_depth = np.array(img_depth, dtype=np.uint16)
                 img_depth = np.divide(img_depth, 100.0)
                 img_depth = img_depth.astype(np.uint8)
                 img_depth = Image.fromarray(img_depth, 'P')
                 img_depth.save(out_depth_name)
     
                 if args.keep:
-                    # copyfile(in_depth_name, out_depth_name)
                     copyfile(in_rgb_name, out_rgb_name)
                 else:
-                    # os.rename(in_depth_name, out_depth_name)
                     os.remove(in_depth_name)
                     os.rename(in_rgb_name, out_rgb_name)
 

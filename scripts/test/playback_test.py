@@ -9,41 +9,14 @@ from PIL import Image
 
 parser = argparse.ArgumentParser(description='format')
 parser.add_argument('--dir', type=str, default= 'vid2vid/datasets/sceneNet', help='Dataset directory')
-parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320', help='Result directory')
+parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320_8g', help='Result directory')
 parser.add_argument('--num', type=int, default= 1, help='Number of result versions')
 
-# @st.cache
-# def load_img(test_A, test_B, result, indx, seq_len):
-#     imgs = []
-#     caption = ['Input', 'Real']
-    
-#     imgs.append(cv2.imread(test_A))
-#     imgs.append(cv2.imread(test_B))
 
-#     caption_num = 0
-
-#     for f in sorted(os.listdir(result)):
-#         fake_pth = os.path.join(result, f)
-#         fake_imgs = sorted(os.listdir(fake_pth))
-
-#         caption_num += 1
-#         caption.append('Fake ' + str(caption_num))
-
-
-#         imgs.append(cv2.imread(test_B))
-#         # if indx < (seq_len - len(fake_imgs)):
-#         #     imgs.append(cv2.imread(test_B))
-
-#         # else:
-#         #     fake_path = fake_pth + '/' + fake_imgs[indx]
-#         #     imgs.append(cv2.imread(fake_path))
-
-#     return tuple(imgs), tuple(caption)
 def load_img(test_A, test_B, result, indx, seq_len):
     imgs = []
     caption = ['Input', 'Real']
     
-
     img = cv2.resize(cv2.imread(test_A),(320, 256), interpolation = cv2.INTER_CUBIC)
     imgs.append(img)
     img = cv2.resize(cv2.imread(test_B),(320, 256), interpolation = cv2.INTER_CUBIC)
@@ -61,7 +34,6 @@ def load_img(test_A, test_B, result, indx, seq_len):
         if indx < (seq_len - len(fake_imgs)):
             img = cv2.resize(cv2.imread(test_B),(320, 256), interpolation = cv2.INTER_CUBIC)
             imgs.append(img)
-
         else:
             fake_path = fake_pth + '/' + fake_imgs[indx]
             img = cv2.resize(cv2.imread(fake_path),(320, 256), interpolation = cv2.INTER_CUBIC)
@@ -84,7 +56,6 @@ if  __name__ == '__main__':
 
     frame_size = (256, 320)
     seq_len = len(sorted(os.listdir(test_A)))
-    # seq_len = 1
 
     st.title('depth2room results:')
     animation = st.empty()
@@ -94,7 +65,3 @@ if  __name__ == '__main__':
         imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i, seq_len)
         animation.image(imgs, caption = imgs_caption, clamp=True)
         progress_bar.progress(int((i + 1.0) / seq_len * 100))
-
-        # if i % 20 == 0:
-        #     st.write('Frame: ', i)
-        #     st.image(imgs, caption= imgs_caption, clamp=True)

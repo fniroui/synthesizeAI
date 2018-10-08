@@ -9,17 +9,24 @@ import imageio
 
 parser = argparse.ArgumentParser(description='format')
 parser.add_argument('--dir', type=str, default= 'vid2vid/datasets/sceneNet', help='Dataset directory')
-parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320', help='Result directory')
+parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320_8g', help='Result directory')
 parser.add_argument('--num', type=int, default= 1, help='Number of result versions')
 
-# @st.cache
+
+def depth_norm(img, depth_min = 0.0, depth_max = 5.0):
+
+    img = 255.0*(1.0 - (img - 1000.0*depth_min) / (1000.0*(depth_max - depth_min)))
+    return img.astype(np.uint8)
+
+ 
 def load_img(test_A, test_B, result, indx, seq_len):
     imgs = []
     caption = ['Input', 'Real']
     
-    img = cv2.resize(cv2.imread(test_A),(320, 256), interpolation = cv2.INTER_CUBIC)
+    img = np.array(Image.open(test_A).resize((320, 256)))
+    img = cv2.applyColorMap(depth_norm(img), cv2.COLORMAP_JET)
     imgs.append(img)
-    img = cv2.resize(cv2.imread(test_B),(320, 256), interpolation = cv2.INTER_CUBIC)
+    img = np.array(Image.open(test_B).convert('RGB').resize((320, 256)))
     imgs.append(img)
 
     caption_num = 0
@@ -31,13 +38,12 @@ def load_img(test_A, test_B, result, indx, seq_len):
         caption_num += 1
         caption.append('Fake ' + str(caption_num))
 
-        if indx < (seq_len - len(fake_imgs)):
-            img = cv2.resize(cv2.imread(test_B),(320, 256), interpolation = cv2.INTER_CUBIC)
+        if indx < 2: 
+            img = np.array(Image.open(test_B).convert('RGB').resize((320, 256)))
             imgs.append(img)
-
         else:
-            fake_path = fake_pth + '/' + fake_imgs[indx]
-            img = cv2.resize(cv2.imread(fake_path),(320, 256), interpolation = cv2.INTER_CUBIC)
+            fake_path = fake_pth + '/' + fake_imgs[indx - 2]
+            img = np.array(Image.open(fake_path).convert('RGB').resize((320, 256)))
             imgs.append(img)
 
     return tuple(imgs), tuple(caption)
@@ -57,21 +63,13 @@ if  __name__ == '__main__':
 
     frame_size = (256, 320)
     seq_len = len(sorted(os.listdir(test_A)))
-    # seq_len = 60
     
-    with imageio.get_writer('result.gif', mode='I', duration=0.1) as writer:
+    with imageio.get_writer('result.gif', mode='I', duration=0.12) as writer:
         for i in range(seq_len):
             imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i, seq_len)
             gif_frame = np.zeros([imgs[0].shape[0], imgs[0].shape[1] * len(imgs), 3])
             
             for j in range(len(imgs)):
-                gif_frame[:, j*imgs[0].shape[1] : j*imgs[0].shape[1] + imgs[0].shape[1], :] = imgs[j]
+                gif_frame[:, j*imgs[0].shape[1] : j*imgs[0].shape[1] + imgs[0].shape[1]] = imgs[j]
             
             writer.append_data(gif_frame)
-
-
-        
-
-
-
-

@@ -1,40 +1,70 @@
-# depth2room
+# synthesize.AI
 
-An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid2vid/) for real-time translation of depth image stream to photorealistic RGB image stream.
+<!-- <p align='center'>  
+  <img src='images/result_50.gif' width='640'/>  
+</p> -->
+
+An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid2vid/) for real-time synthesis of coloured image sequences from depth image stream, designed for more robust robotic development in simulated environments. 
 
 ## Prerequisites
 - Ubuntu 16.04 LTS
 - Python 3
-- NVIDIA GPU + CUDA cuDNN
+- NVIDIA GPU (compute capability 6.0+) & CUDA cuDNN
 - PyTorch 0.4 or higher
 
 ## Setup
 ### Installation
 - Install the required python libraries:
     ```bash
-    pip install dominate requests
+    pip install dominate requests streamlit
     ```
 - Clone this repository:
     ```bash
-    git clone https://github.com/fniroui/depth2room.git
+    git clone https://github.com/fniroui/synthesizeAI.git
     cd depth2room
     ```
 - Clone the forked version of the [vid2vid](https://github.com/NVIDIA/vid2vid) repository which has been modified for this project:
     ```bash
     git clone https://github.com/fniroui/vid2vid.git
+    cd vid2vid
     ```
 - Download and compile a snapshot of [FlowNet2](https://github.com/NVIDIA/flownet2-pytorch) by running:
     ```
-    python vid2vid/scripts/download_flownet2.py
+    python scripts/download_flownet2.py
+    ```
+- Download the FlowNet2 checkpoint:
+    ```
+    python scripts/download_models_flownet2.py
     ```
 
 ### Dataset
 - The [SceneNet RGB-D](https://robotvault.bitbucket.io/scenenet-rgbd.html) dataset is used in this project. Download the complete or partial training dataset.
-- Run `python ...` with the correct directory to the downloaded dataset to move and format the dataset to `./vid2vid/datasets/Scenenet`.
+- Navigate to the synthesizeAI directory and run:
+    ```
+    python scripts/data/sceneNet_format.py --dir "sceneNet directory"
+    ```
+    with the directory of the downloaded dataset to move and format the dataset to `./vid2vid/datasets/Scenenet`.
 
 ### Testing
+- Download the model chechkpoint by running:
+    ```
+    Coming soon!
+    ```
+- To use the provided test sequence located at `./vid2vid/dataset/sceneNet/test_A and test_B`, run `bash scripts/test/test_320.bash` or:
+    ```
+    bash scripts/test/test_320.bash
+    ```
 
 ### Training
+- Download the dataset and format it by following the above instructions.
+- If you have a single GPU, run ` ` or:
+    ```
+
+    ```
+- For multi-GPU training, run ` ` or:
+    ```
+
+    ```
 
 
 ## License

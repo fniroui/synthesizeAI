@@ -14,12 +14,24 @@ parser.add_argument('--num', type=int, default= 1, help='Number of result versio
 
 
 def depth_norm(img, depth_min = 0.0, depth_max = 5.0):
+    """Normalizes the depth image
+    img       : depth image
+    depth_min : minimum depth range (m)
+    depth_max : maximum depth range (m)
+    """
 
     img = 255.0*(1.0 - (img - 1000.0*depth_min) / (1000.0*(depth_max - depth_min)))
     return img.astype(np.uint8)
 
  
-def load_img(test_A, test_B, result, indx, seq_len):
+def load_img(test_A, test_B, result, indx):
+    """Loads images at a given index.
+    test_A : path to the input image 
+    test_B : path to the real image
+    result : path to the synthesized image
+    indx   : index of the sequence
+    """
+
     imgs = []
     caption = ['Input', 'Real']
     
@@ -66,7 +78,7 @@ if  __name__ == '__main__':
     
     with imageio.get_writer('result.gif', mode='I', duration=0.12) as writer:
         for i in range(seq_len):
-            imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i, seq_len)
+            imgs, imgs_caption = load_img(test_A + '/' + input_imgs[i], test_B + '/' + real_imgs[i], result, i)
             gif_frame = np.zeros([imgs[0].shape[0], imgs[0].shape[1] * len(imgs), 3])
             
             for j in range(len(imgs)):

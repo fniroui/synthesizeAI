@@ -4,7 +4,9 @@
   <img src='images/result_50.gif' width='640'/>  
 </p> -->
 
-An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid2vid/) for real-time synthesis of coloured image sequences from depth image stream, designed for more robust robotic development in simulated environments. 
+An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid2vid/) for real-time synthesis of realistic image sequences from depth image stream, designed for more robust robotic development in simulated environments. 
+
+This project comes in two repositories. This repository, for general purpose scripts and documentation, and a forked version of the [vid2vid](https://github.com/fniroui/vid2vid.git) repository which is modified to support 1 channel depth image as input.
 
 ## Prerequisites
 - Ubuntu 16.04 LTS
@@ -23,7 +25,7 @@ An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid
     git clone https://github.com/fniroui/synthesizeAI.git
     cd depth2room
     ```
-- Clone the forked version of the [vid2vid](https://github.com/NVIDIA/vid2vid) repository which has been modified for this project:
+- Clone the forked version of the [vid2vid](https://github.com/fniroui/vid2vid.git) repository which has been modified for this project:
     ```bash
     git clone https://github.com/fniroui/vid2vid.git
     cd vid2vid

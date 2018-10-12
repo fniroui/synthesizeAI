@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import argparse
-import streamlit as st
 import numpy as np
 import cv2
 from PIL import Image
@@ -9,10 +8,10 @@ from PIL import Image
 
 parser = argparse.ArgumentParser(description='format')
 parser.add_argument('--dir', type=str, default= 'vid2vid/datasets/sceneNet', help='Dataset directory')
-parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320_8g', help='Result directory')
+parser.add_argument('--res', type=str, default= 'vid2vid/results/depth2room_320_1', help='Result directory')
 parser.add_argument('--num', type=int, default= 1, help='Number of result versions')
 
-def depth_norm(img, depth_min = 0.0, depth_max = 5.0):
+def depth_norm(img, depth_min = 0.0, depth_max = 15.0):
     """Normalizes the depth image
     img       : depth image
     depth_min : minimum depth range (m)
@@ -58,6 +57,8 @@ def load_img(test_A, test_B, result, indx):
 
 
 if  __name__ == '__main__':
+    import streamlit as st
+
     args = parser.parse_args()
     test_A = os.path.join(Path(__file__).parents[2], args.dir + '/test_A')
     test_B = os.path.join(Path(__file__).parents[2], args.dir + '/test_B')

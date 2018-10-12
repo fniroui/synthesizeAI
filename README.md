@@ -1,12 +1,12 @@
 # synthesize.AI
 
-<!-- <p align='center'>  
-  <img src='images/result_50.gif' width='640'/>  
-</p> -->
-
 An implementation of [Video-to-Video Synthesis](https://tcwang0509.github.io/vid2vid/) for real-time synthesis of realistic image sequences from depth image stream, designed for more robust robotic development in simulated environments. 
 
-This project comes in two repositories. This repository, for general purpose scripts and documentation, and a forked version of the [vid2vid](https://github.com/fniroui/vid2vid.git) repository which is modified to support 1 channel depth image as input.
+This project comes in two repositories. This repository, for general purpose scripts and documentation, and a forked version of the [vid2vid](https://github.com/fniroui/vid2vid.git) repository which is modified to support 1 channel depth image as input. The presentation slides for this project are provided as [Google Slides](https://docs.google.com/presentation/d/10UUUsJWL2R0r9y5FpoIfv9wJboyUFt7svuSvhGRsmZ8/edit?usp=sharing).
+
+<p align='center'>  
+  <img src='images/pipeline.png' width='640'/>  
+</p>
 
 ## Prerequisites
 - Ubuntu 16.04 LTS
@@ -22,6 +22,7 @@ This project comes in two repositories. This repository, for general purpose scr
     ```
 - Clone this repository to your home folder:
     ```bash
+    cd ~
     git clone https://github.com/fniroui/synthesizeAI.git
     cd depth2room
     ```
@@ -47,7 +48,7 @@ This project comes in two repositories. This repository, for general purpose scr
     ```
     with the directory of the downloaded dataset to move and format the dataset to `./vid2vid/datasets/Scenenet`.
 
-### Testing
+## Testing
 - Download the model and extract it to the `.vid2vid/checkpoints` folder:
     ```
     https://drive.google.com/open?id=1ppXTHXsFaGB-vrNjJlPswWuVDrMka3zg
@@ -57,7 +58,7 @@ This project comes in two repositories. This repository, for general purpose scr
     bash scripts/test/test_320.bash
     ```
 
-### Training
+## Training
 - Download the dataset and format it by following the above instructions.
 - If you have a single GPU, run `bash scripts/train/train_g1_320.sh` or:
     ```bash
@@ -69,6 +70,13 @@ This project comes in two repositories. This repository, for general purpose scr
     cd ~/depth2room/vid2vid
     python train.py --name depth2room_320_8g --dataroot datasets/sceneNet --input_nc 1 --loadSize 320 --gpu_ids 0,1,2,3,4,5,6,7 --n_gpus_gen 4 --n_frames_total 6 --niter_step 2 --niter_fix_global 8 --num_D 3 --n_scales_spatial 2 --tf_log --display_freq 100 --max_dataset_size 50
     ```
+
+## Analysis
+The current model, trained using 50 sequences, can generate 2 synthetic images every second using a single NVIDIA Tesla V100 GPU. The surfaces have some texture and shadows are being generated:
+<p align='center'>  
+  <img src='images/result_50.gif' width='640'/>  
+</p>
+
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/fniroui/depth2room/blob/master/LICENSE.txt) file for details and the license of the other projects used within this repository. 

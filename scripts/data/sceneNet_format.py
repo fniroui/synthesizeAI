@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     home = str(Path.home())
     in_dir = args.dir.replace('~', home)
-    out_dir = './vid2vid/datasets/sceneNet/'
+    out_dir = '../../vid2vid/datasets/sceneNet/'
 
     assert os.path.isdir(in_dir), '%s is not a valid directory' % in_dir
     assert os.path.isdir(out_dir), 'vid2vid repo not found within depth2room'
